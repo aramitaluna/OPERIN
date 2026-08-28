@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OPERIN — Student Move-Out Circular Marketplace</title>
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f7f8fa;--bg3:#eef2f7;--surface:#ffffff;--border:#e2e8f0;
+  --text:#1a202c;--text2:#4a5568;--text3:#718096;
+  --green:#2d7d46;--green-l:#e8f5ec;--green-d:#1a5c31;
+  --orange:#e8882a;--orange-l:#fff3e6;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --r:12px;--nav:68px;
+}
+[data-theme="dark"]{
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#334155;--surface:#1e293b;--border:#334155;
+  --text:#f1f5f9;--text2:#cbd5e1;--text3:#94a3b8;
+  --green:#4ade80;--green-l:#14532d;--green-d:#86efac;
+  --orange:#fb923c;--orange-l:#431407;
+  --shadow:0 2px 12px rgba(0,0,0,.4);--shadow-lg:0 8px 32px rgba(0,0,0,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:15px}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;line-height:1.6}
+a{color:inherit;text-decoration:none}img{max-width:100%}ul{list-style:none}button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* NAV */
+#navbar{position:fixed;top:0;left:0;right:0;height:var(--nav);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 5%;z-index:1000;box-shadow:var(--shadow);transition:background .3s}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.2rem;cursor:pointer}
+.nav-logo .cat{font-size:1.6rem}
+.nav-logo .brand span{color:var(--green)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{padding:7px 13px;border-radius:8px;font-weight:500;font-size:.88rem;color:var(--text2);transition:background .2s,color .2s;cursor:pointer}
+.nav-links a:hover,.nav-links a.active{background:var(--green-l);color:var(--green)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.btn-theme{width:36px;height:36px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;transition:background .2s}
+.btn-theme:hover{background:var(--bg3)}
+.btn-submit-nav{background:var(--green);color:#fff;padding:7px 16px;border-radius:8px;font-weight:600;font-size:.83rem;transition:background .2s;cursor:pointer}
+.btn-submit-nav:hover{background:var(--green-d)}
+/* Hamburger menu */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border-radius:7px;transition:background .2s}
+.nav-hamburger:hover{background:var(--bg2)}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+/* Mobile nav drawer */
+.nav-drawer{display:none;position:fixed;top:var(--nav);left:0;right:0;background:var(--surface);border-bottom:2px solid var(--border);box-shadow:var(--shadow-lg);z-index:999;padding:12px 5% 18px;flex-direction:column;gap:4px}
+.nav-drawer.open{display:flex}
+.nav-drawer a{padding:10px 14px;border-radius:9px;font-weight:500;font-size:.93rem;color:var(--text2);cursor:pointer;transition:background .2s,color .2s}
+.nav-drawer a:hover,.nav-drawer a.dactive{background:var(--green-l);color:var(--green);font-weight:600}
+.nav-drawer .d-divider{height:1px;background:var(--border);margin:6px 0}
+/* Responsive breakpoints */
+@media(max-width:1023px){
+  .nav-links,.nav-right .btn-submit-nav{display:none}
+  .nav-hamburger{display:flex}
+  .nav-right{gap:6px}
+}
+@media(max-width:767px){
+  html{font-size:14px}
+  section{padding:48px 4%}
+  .hero{padding:48px 4%}
+  .hero h1{font-size:clamp(1.7rem,7vw,2.6rem)}
+  .hero-stats{gap:20px}
+  .impact-bar{gap:24px;padding:18px 4%}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .about-grid{grid-template-columns:1fr}
+}
+@media(max-width:479px){
+  .hero-stats{flex-direction:column;gap:12px}
+  .fgrid{grid-template-columns:1fr}
+  .store-grid{grid-template-columns:1fr 1fr}
+  .frow{grid-template-columns:1fr}
+}
+
+/* PAGES */
+.page{display:none;padding-top:var(--nav)}
+.page.active{display:block}
+
+/* HERO */
+.hero{min-height:calc(100vh - var(--nav));background:linear-gradient(135deg,var(--green) 0%,var(--green-d) 55%,#1a3a27 100%);display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 5%;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(255,255,255,.06) 0%,transparent 70%)}
+.hero-content{position:relative;z-index:1;max-width:820px}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);color:#fff;padding:6px 18px;border-radius:50px;font-size:.78rem;font-weight:600;margin-bottom:22px;border:1px solid rgba(255,255,255,.25);letter-spacing:.5px}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);color:#fff;font-weight:800;line-height:1.15;margin-bottom:16px}
+.hero h1 em{color:#fbbf24;font-style:normal}
+.hero p{font-size:1.05rem;color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 32px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero-prim{background:#fff;color:var(--green-d);padding:12px 28px;border-radius:10px;font-weight:700;font-size:.95rem;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.btn-hero-prim:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.btn-hero-sec{background:transparent;color:#fff;padding:12px 28px;border-radius:10px;font-weight:600;font-size:.95rem;border:2px solid rgba(255,255,255,.5);transition:background .2s;cursor:pointer}
+.btn-hero-sec:hover{background:rgba(255,255,255,.1)}
+.hero-stats{display:flex;gap:40px;justify-content:center;margin-top:60px;flex-wrap:wrap}
+.hstat{color:#fff;text-align:center}
+.hstat .num{font-size:1.9rem;font-weight:800;color:#fbbf24}
+.hstat .lbl{font-size:.75rem;color:rgba(255,255,255,.7);margin-top:2px}
+
+/* MASCOT OPIE (inline SVG cartoon) */
+.opie{display:inline-block;font-size:2.5rem;line-height:1}
+
+/* IMPACT BAR */
+.impact-bar{background:var(--green);padding:24px 5%;display:flex;justify-content:center;gap:60px;flex-wrap:wrap}
+.iitem{text-align:center;color:#fff}
+.iitem .num{font-size:1.7rem;font-weight:800}
+.iitem .lbl{font-size:.75rem;opacity:.8;margin-top:2px}
+
+/* SECTION COMMONS */
+section{padding:68px 5%}
+.slabel{color:var(--green);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.stitle{font-size:clamp(1.4rem,3vw,2.1rem);font-weight:800;margin-bottom:10px}
+.ssub{color:var(--text2);font-size:.95rem;max-width:580px}
+.shead{margin-bottom:44px}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:26px 22px;transition:box-shadow .2s,transform .2s}
+.sc:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.sc-ico{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px}
+.sc h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.sc p{font-size:.85rem;color:var(--text2);line-height:1.6}
+.sc .stag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:700;margin-top:12px}
+
+/* PARTNERS */
+.partners-scroll{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.pchip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;transition:box-shadow .2s}
+.pchip:hover{box-shadow:var(--shadow)}
+.pchip .pico{font-size:1.5rem}
+.pchip .pname{font-weight:600;font-size:.88rem}
+.pchip .ptype{font-size:.75rem;color:var(--text3)}
+
+/* PRODUCTS */
+.store-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.fbtn{padding:7px 15px;border-radius:50px;border:1px solid var(--border);font-size:.82rem;font-weight:500;color:var(--text2);background:var(--surface);transition:background .2s,color .2s;cursor:pointer}
+.fbtn.active,.fbtn:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:box-shadow .2s,transform .2s}
+.pcard:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.pcard-img{height:155px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:2.8rem;position:relative}
+.pbadge{position:absolute;top:8px;right:8px;padding:3px 10px;border-radius:50px;font-size:.68rem;font-weight:700}
+.bs{background:#dcfce7;color:#15803d}.bg{background:#dbeafe;color:#1d4ed8}
+.br{background:#fef3c7;color:#b45309}.bu{background:#fae8ff;color:#7e22ce}
+.pcard-body{padding:13px}
+.pcard-body h4{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.pcard-body .price{font-size:.95rem;font-weight:800;color:var(--green);margin-bottom:6px}
+.pcard-body .pmeta{font-size:.72rem;color:var(--text3);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grade{display:inline-block;padding:2px 7px;border-radius:4px;font-size:.68rem;font-weight:700}
+.gA{background:#dcfce7;color:#15803d}.gB{background:#fef9c3;color:#854d0e}.gC{background:#fee2e2;color:#b91c1c}
+.btn-pcard{width:100%;margin-top:8px;padding:7px;border-radius:8px;background:var(--green-l);color:var(--green);font-weight:600;font-size:.8rem;transition:background .2s;cursor:pointer}
+.btn-pcard:hover{background:var(--green);color:#fff}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+@media(max-width:768px){.about-grid{grid-template-columns:1fr}}
+.about-text h2{font-size:clamp(1.4rem,3vw,2rem);font-weight:800;margin-bottom:14px}
+.about-text p{color:var(--text2);margin-bottom:12px;font-size:.93rem}
+.sdg-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}
+.sdgc{padding:4px 12px;border-radius:50px;font-size:.73rem;font-weight:700;background:var(--green-l);color:var(--green);border:1px solid var(--green)}
+.team-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.tavatar{width:52px;height:52px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;flex-shrink:0}
+.tname{font-weight:700;font-size:.93rem}.trole{font-size:.78rem;color:var(--green);font-weight:600}
+.tdesc{font-size:.78rem;color:var(--text2);margin-top:3px}
+
+/* FORM SUBMIT */
+.form-wrap{max-width:720px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:38px;box-shadow:var(--shadow)}
+.form-wrap h2{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.form-wrap .fsub{color:var(--text2);font-size:.88rem;margin-bottom:26px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-weight:600;font-size:.83rem;margin-bottom:5px}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:.88rem;font-family:inherit;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green)}
+.fg textarea{resize:vertical;min-height:80px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:540px){.frow{grid-template-columns:1fr}}
+.kanal-wrap{display:flex;gap:8px;flex-wrap:wrap}
+.kopt{flex:1;min-width:90px;border:2px solid var(--border);border-radius:10px;padding:11px;text-align:center;cursor:pointer;transition:all .2s;user-select:none}
+.kopt.sel{border-color:var(--green);background:var(--green-l)}
+.kopt .kico{font-size:1.3rem;display:block;margin-bottom:3px}
+.kopt .klbl{font-size:.73rem;font-weight:700}
+.ongkir-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:6px}
+.ongkir-box h4{font-weight:700;font-size:.88rem;margin-bottom:10px}
+.oopt{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:9px 13px;cursor:pointer;transition:border-color .2s;margin-bottom:6px}
+.oopt:hover{border-color:var(--green)}.oopt.sel{border-color:var(--green);background:var(--green-l)}
+.oopt-l{display:flex;align-items:center;gap:9px}
+.oopt-ico{font-size:1rem}.oopt-name{font-weight:600;font-size:.83rem}
+.oopt-sub{font-size:.72rem;color:var(--text3)}
+.oopt-price{font-weight:700;color:var(--green);font-size:.85rem}
+.dist-info{display:flex;gap:8px;align-items:center;background:var(--green-l);border-radius:8px;padding:10px;margin-top:8px}
+.dist-info .di{font-size:.8rem;color:var(--green-d);font-weight:600}
+.kurir-fields{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:6px;display:none}
+.kurir-fields.show{display:block}
+.kurir-fields h4{font-weight:700;font-size:.88rem;margin-bottom:10px}
+.ref-row{display:flex;gap:7px}
+.ref-row input{flex:1}
+.btn-ref{padding:9px 14px;background:var(--orange);color:#fff;border-radius:8px;font-weight:600;font-size:.8rem;white-space:nowrap;cursor:pointer;transition:background .2s}
+.btn-ref:hover{background:#c97418}
+.btn-form-sub{width:100%;padding:13px;background:var(--green);color:#fff;border-radius:10px;font-weight:700;font-size:.95rem;margin-top:6px;transition:background .2s,transform .2s;cursor:pointer}
+.btn-form-sub:hover{background:var(--green-d);transform:translateY(-1px)}
+.success-msg{background:#dcfce7;border:1px solid #bbf7d0;border-radius:10px;padding:14px 18px;color:#15803d;font-weight:600;font-size:.88rem;display:none;margin-bottom:16px}
+
+/* MAP */
+.map-section{background:var(--bg2)}
+.map-wrap{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);margin-top:22px}
+.map-wrap iframe{width:100%;height:360px;border:none;display:block}
+.hub-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px}
+.hcard{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;display:flex;gap:11px;align-items:flex-start}
+.hcard .hico{font-size:1.4rem;margin-top:2px}
+.hcard .hname{font-weight:700;font-size:.88rem}
+.hcard .haddr{font-size:.75rem;color:var(--text2);margin-top:2px}
+.hcard .hhours{font-size:.72rem;color:var(--green);font-weight:600;margin-top:4px}
+
+/* ADMIN DASHBOARD */
+.dash-layout{display:flex;min-height:calc(100vh - var(--nav))}
+.dash-side{width:210px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:var(--nav);height:calc(100vh - var(--nav));overflow-y:auto}
+.dash-side .mlabel{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:0 18px;margin:14px 0 5px}
+.dash-side a{display:flex;align-items:center;gap:9px;padding:9px 18px;font-size:.85rem;font-weight:500;color:var(--text2);transition:background .2s,color .2s;cursor:pointer}
+.dash-side a:hover,.dash-side a.active{background:var(--green-l);color:var(--green);font-weight:600}
+.dash-side a .sico{font-size:.95rem;width:18px;text-align:center}
+.dash-main{flex:1;padding:28px;overflow-x:auto}
+.dheader{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px}
+.dheader h2{font-size:1.3rem;font-weight:800}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.kpi .kl{font-size:.72rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.kpi .kv{font-size:1.7rem;font-weight:800;margin:5px 0 3px}
+.kpi .kd{font-size:.72rem;font-weight:600}
+.up{color:#16a34a}.dn{color:#dc2626}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:22px}
+.tcard .thead-row{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.tcard .thead-row h3{font-size:.92rem;font-weight:700}
+.tcard table{width:100%;border-collapse:collapse}
+.tcard th{background:var(--bg2);padding:9px 15px;text-align:left;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.tcard td{padding:11px 15px;border-bottom:1px solid var(--border);font-size:.83rem}
+.tcard tr:last-child td{border:none}
+.tcard tr:hover td{background:var(--bg2)}
+.sbadge{display:inline-block;padding:3px 9px;border-radius:50px;font-size:.68rem;font-weight:700}
+.sp{background:#fef3c7;color:#b45309}.si{background:#dbeafe;color:#1d4ed8}
+.sl{background:#dcfce7;color:#15803d}.ss{background:#f0fdf4;color:#166534}
+.sd{background:#ede9fe;color:#5b21b6}.sr{background:#fef9c3;color:#713f12}
+.su{background:#fce7f3;color:#9d174d}
+.btn-act{padding:4px 11px;border-radius:6px;font-size:.72rem;font-weight:600;background:var(--green-l);color:var(--green);cursor:pointer;transition:background .2s}
+.btn-act:hover{background:var(--green);color:#fff}
+.grade-form{display:flex;gap:5px;align-items:center}
+.grade-form select{padding:3px 7px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.75rem}
+.chart-ph{background:var(--bg2);border-radius:10px;height:190px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:.83rem;border:2px dashed var(--border);margin-top:14px;flex-direction:column;gap:6px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:880px){.two-col{grid-template-columns:1fr}}
+
+/* USER DASHBOARD */
+.udash{max-width:940px;margin:0 auto;padding:30px 5%}
+.udash-welcome{margin-bottom:26px}
+.udash-welcome h2{font-size:1.3rem;font-weight:800}
+.udash-welcome p{color:var(--text2);font-size:.88rem}
+.tracking-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.tc-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tc-name{font-weight:700;font-size:.92rem}
+.tc-id{font-size:.73rem;color:var(--text3);margin-top:2px}
+.steps{display:flex;gap:0;overflow-x:auto;padding-bottom:4px}
+.step{flex:1;min-width:80px;text-align:center;position:relative}
+.step::after{content:'';position:absolute;top:13px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:last-child::after{display:none}
+.step.done::after{background:var(--green)}
+.step .dot{width:26px;height:26px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 5px;position:relative;z-index:1;font-size:.7rem}
+.step.done .dot{background:var(--green);color:#fff}
+.step.cur .dot{background:var(--orange);color:#fff;box-shadow:0 0 0 4px var(--orange-l)}
+.step .slbl{font-size:.65rem;color:var(--text3)}
+.step.done .slbl,.step.cur .slbl{color:var(--text);font-weight:600}
+.eco-card{background:linear-gradient(135deg,var(--green),var(--green-d));border-radius:var(--r);padding:22px;color:#fff;margin-bottom:14px}
+.eco-card h3{font-size:.95rem;font-weight:700;margin-bottom:10px;opacity:.9}
+.eco-stats{display:flex;gap:22px;flex-wrap:wrap}
+.estat .val{font-size:1.5rem;font-weight:800}
+.estat .elbl{font-size:.72rem;opacity:.8}
+
+/* WA FLOAT */
+.wa-float{position:fixed;bottom:26px;right:26px;z-index:999;width:56px;height:56px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,211,102,.4);cursor:pointer;transition:transform .2s,box-shadow .2s;animation:wpulse 2.5s infinite}
+.wa-float:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(37,211,102,.6)}
+@keyframes wpulse{0%,100%{box-shadow:0 4px 18px rgba(37,211,102,.4)}50%{box-shadow:0 4px 28px rgba(37,211,102,.7),0 0 0 8px rgba(37,211,102,.1)}}
+.wa-float svg{width:28px;height:28px;fill:#fff}
+.wa-tip{position:fixed;bottom:94px;right:26px;z-index:998;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow-lg);width:220px;display:none}
+.wa-tip.show{display:block}
+.wa-tip .wt{font-weight:700;font-size:.85rem;margin-bottom:3px}
+.wa-tip .ws{font-size:.76rem;color:var(--text2)}
+.wa-tip .wb{margin-top:9px;display:block;width:100%;padding:7px;background:#25d366;color:#fff;border-radius:8px;font-weight:700;font-size:.8rem;text-align:center;cursor:pointer}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 5% 22px}
+.fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:36px}
+@media(max-width:768px){.fgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.fgrid{grid-template-columns:1fr}}
+.fbrand .fl{font-size:1.2rem;font-weight:800;margin-bottom:9px}
+.fbrand .fl span{color:var(--green)}
+.fbrand p{font-size:.8rem;color:var(--text2);line-height:1.7;max-width:240px}
+.fcol h4{font-weight:700;font-size:.85rem;margin-bottom:12px}
+.fcol li{margin-bottom:7px}
+.fcol li a{font-size:.8rem;color:var(--text2);transition:color .2s;cursor:pointer}
+.fcol li a:hover{color:var(--green)}
+.fbot{border-top:1px solid var(--border);padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.fbot p{font-size:.75rem;color:var(--text3)}
+.socials{display:flex;gap:8px}
+.socials a{width:30px;height:30px;border-radius:7px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;transition:background .2s}
+.socials a:hover{background:var(--green);color:#fff}
+
+/* MISC */
+.divider{height:1px;background:var(--border)}
+.tab-bar{display:flex;gap:3px;border-bottom:2px solid var(--border);margin-bottom:22px}
+.tab-btn{padding:9px 16px;font-size:.85rem;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;transition:color .2s,border-color .2s}
+.tab-btn.active{color:var(--green);border-color:var(--green)}
+.alert-ok{padding:11px 15px;border-radius:9px;background:#dcfce7;border:1px solid #bbf7d0;color:#15803d;font-weight:600;font-size:.83rem;display:none;margin-bottom:14px}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+@media(max-width:640px){.dash-layout{flex-direction:column}.dash-side{width:100%;height:auto;position:relative;padding:6px 0;display:flex;flex-wrap:wrap}.dash-side a{padding:7px 12px;display:inline-flex}.dash-main{padding:18px}}
+</style>
+</head>
+<body>
+<!-- ====================================================== NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo" onclick="showPage('home')">
+    <span class="cat">🐱</span>
+    <div class="brand"><span>OPER</span>IN</div>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('home')" class="active" id="nav-home">Home</a>
+    <a onclick="showPage('about')" id="nav-about">About Us</a>
+    <a onclick="showPage('services')" id="nav-services">Services</a>
+    <a onclick="showPage('partners')" id="nav-partners">Partners</a>
+    <a onclick="showPage('products')" id="nav-products">Products</a>
+    <a onclick="showPage('location')" id="nav-location">Location</a>
+    <a onclick="showPage('dashboard-user')" id="nav-dashboard-user">My Dashboard</a>
+    <a onclick="showPage('dashboard-admin')" id="nav-dashboard-admin" style="color:var(--orange);font-weight:700">Admin</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-theme" id="themeBtn" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
+    <button class="btn-submit-nav" onclick="showPage('submit')">+ Submit Barang</button>
+    <div class="nav-hamburger" id="hamburger" onclick="toggleDrawer()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer">
+  <a onclick="navGo('home')">🏠 Home</a>
+  <a onclick="navGo('about')">👥 About Us</a>
+  <a onclick="navGo('services')">⚙️ Services</a>
+  <a onclick="navGo('partners')">🤝 Partners</a>
+  <a onclick="navGo('products')">🛒 Products</a>
+  <a onclick="navGo('location')">📍 Location</a>
+  <div class="d-divider"></div>
+  <a onclick="navGo('dashboard-user')">📊 My Dashboard</a>
+  <a onclick="navGo('dashboard-admin')" style="color:var(--orange);font-weight:700">⚙️ Admin</a>
+  <div class="d-divider"></div>
+  <a onclick="navGo('submit')" style="background:var(--green);color:#fff;font-weight:700">+ Submit Barang</a>
+</div>
+
+<!-- ====================================================== PAGE: HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🌿 Student Move-Out Circular Marketplace</div>
+      <h1>Udah Nggak Kepakai?<br><em>OPERIN Aja.</em></h1>
+      <p>Jual, donasikan, atau daur ulang barang kosmu dengan aman, mudah, dan berdampak. Platform sirkular pertama untuk mahasiswa Indonesia.</p>
+      <div class="hero-btns">
+        <button class="btn-hero-prim" onclick="showPage('submit')">🐱 Submit Barangku</button>
+        <button class="btn-hero-sec" onclick="showPage('products')">Lihat Products →</button>
+      </div>
+    </div>
+  </div>
+
+
+  <section>
+    <div class="shead">
+      <div class="slabel">Ekosistem Layanan</div>
+      <div class="stitle">Semua yang Kamu Butuhkan Saat Move-Out</div>
+      <div class="ssub">Dari jual, donasi, daur ulang, sampai penjemputan — OPERIN handle semuanya.</div>
+    </div>
+    <div class="services-grid">
+      <div class="sc" onclick="showPage('services')">
+        <div class="sc-ico" style="background:#e8f5ec">🛒</div>
+        <h3>OPERIN Sell</h3>
+        <p>Jual barang kosmu dengan escrow aman. AI Smart Valuation menilai harga wajar otomatis berdasarkan kondisi & pasar lokal.</p>
+        <span class="stag" style="background:#dcfce7;color:#15803d">Marketplace</span>
+      </div>
+      <div class="sc" onclick="showPage('services')">
+        <div class="sc-ico" style="background:#dbeafe">💙</div>
+        <h3>OPERIN Give</h3>
+        <p>Donasikan barang layak pakai ke mahasiswa afirmasi atau panti asuhan mitra. Dapat Social Impact Certificate digital.</p>
+        <span class="stag" style="background:#dbeafe;color:#1d4ed8">Sosial</span>
+      </div>
+      <div class="sc" onclick="showPage('services')">
+        <div class="sc-ico" style="background:#fef3c7">♻️</div>
+        <h3>OPERIN Recycle</h3>
+        <p>Material plastik, logam, kayu disalurkan ke bank sampah & industri daur ulang resmi bersertifikat.</p>
+        <span class="stag" style="background:#fef3c7;color:#b45309">Lingkungan</span>
+      </div>
+      <div class="sc" onclick="showPage('services')">
+        <div class="sc-ico" style="background:#fae8ff">✨</div>
+        <h3>OPERIN Upcycle</h3>
+        <p>Barang rusak diproses ulang menjadi produk baru bernilai tinggi bersama mitra pengrajin & UKM kreatif Bandung.</p>
+        <span class="stag" style="background:#fae8ff;color:#7e22ce">Upcycling</span>
+      </div>
+      <div class="sc" onclick="showPage('services')">
+        <div class="sc-ico" style="background:#fff3e6">🛵</div>
+        <h3>OPERIN Pickup</h3>
+        <p>Penjemputan barang besar langsung ke kamar kosmu pakai armada roda tiga. Flat Rp25.000/order, radius ≤3 km.</p>
+        <span class="stag" style="background:#fff3e6;color:#c2410c">Logistik</span>
+      </div>
+      <div class="sc" onclick="showPage('location')">
+        <div class="sc-ico" style="background:#f0fdf4">📍</div>
+        <h3>OPERIN Point</h3>
+        <p>Drop-off di 10+ titik kos & asrama mitra dalam radius 2 km dari kampus Tel-U Bandung. Hub Pilot di Amagriya Eka.</p>
+        <span class="stag" style="background:#f0fdf4;color:#166534">Hub Fisik</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <div class="shead">
+      <div class="slabel">Mitra Terpercaya</div>
+      <div class="stitle">Ekosistem Kemitraan OPERIN</div>
+    </div>
+    <div class="partners-scroll">
+      <div class="pchip" style="background:var(--green-l);border:1px solid var(--green)"><span class="pico">🌙</span><div><div class="pname" style="color:var(--green);font-weight:700">Casa de Luna</div><div class="ptype">OPERIN Pilot Hub Partner</div></div></div>
+      <div class="pchip"><span class="pico">🏫</span><div><div class="pname">Telkom University</div><div class="ptype">Kampus Mitra</div></div></div>
+      <div class="pchip"><span class="pico">🏠</span><div><div class="pname">Pengelola Kos Mitra</div><div class="ptype">OPERIN Point Host</div></div></div>
+      <div class="pchip"><span class="pico">🏢</span><div><div class="pname">Dormitory Tel-U</div><div class="ptype">Drop-off Partner</div></div></div>
+      <div class="pchip"><span class="pico">💚</span><div><div class="pname">Panti Asuhan Mitra</div><div class="ptype">Penerima Donasi</div></div></div>
+      <div class="pchip"><span class="pico">♻️</span><div><div class="pname">Bank Sampah Lokal</div><div class="ptype">Recycle Partner</div></div></div>
+      <div class="pchip"><span class="pico">🎨</span><div><div class="pname">UKM Pengrajin</div><div class="ptype">Upcycle Partner</div></div></div>
+      <div class="pchip"><span class="pico">🛵</span><div><div class="pname">Mitra Driver Lokal</div><div class="ptype">Logistik Partner</div></div></div>
+      <div class="pchip"><span class="pico">💳</span><div><div class="pname">Midtrans / Xendit</div><div class="ptype">Payment Gateway</div></div></div>
+    </div>
+    <div style="text-align:center;margin-top:24px">
+      <button style="background:var(--green);color:#fff;padding:10px 24px;border-radius:9px;font-weight:600;font-size:.88rem;cursor:pointer" onclick="showPage('partners')">Lihat Semua Partners →</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="fgrid">
+      <div class="fbrand">
+        <div class="fl">🐱 <span>OPER</span>IN</div>
+        <p>Student Move-Out Circular Marketplace. Jual, Donasi, Daur Ulang & Upcycle dalam 1 platform. Berbasis di Telkom University Bandung.</p>
+      </div>
+      <div class="fcol"><h4>Navigasi</h4><ul>
+        <li><a onclick="showPage('home')">Home</a></li>
+        <li><a onclick="showPage('about')">About Us</a></li>
+        <li><a onclick="showPage('services')">Services</a></li>
+        <li><a onclick="showPage('products')">Products</a></li>
+      </ul></div>
+      <div class="fcol"><h4>Platform</h4><ul>
+        <li><a onclick="showPage('submit')">Submit Barang</a></li>
+        <li><a onclick="showPage('location')">Lokasi Hub</a></li>
+        <li><a onclick="showPage('dashboard-user')">My Dashboard</a></li>
+        <li><a onclick="showPage('partners')">Partners</a></li>
+      </ul></div>
+      <div class="fcol"><h4>Kontak</h4><ul>
+        <li><a>📍 Jl. Amagriya Eka 1 No.3, Bandung</a></li>
+        <li><a>📱 wa.me/operin</a></li>
+        <li><a>📸 @operin.id</a></li>
+        <li><a>✉️ hello@operin.id</a></li>
+      </ul></div>
+    </div>
+    <div class="fbot">
+      <p>© 2026 OPERIN. All Rights Reserved. | Tim Kimpul Jaya — HoloBiz HOLOGY 9.0 UB</p>
+      <div class="socials">
+        <a title="Instagram">📸</a><a title="TikTok">🎵</a><a title="WhatsApp">💬</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ====================================================== PAGE: ABOUT -->
+<div id="page-about" class="page">
+  <section>
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="slabel">Tentang Kami</div>
+        <h2>OPERIN: Circular Tech Startup untuk Ekosistem Mahasiswa</h2>
+        <p>OPERIN lahir dari pengamatan langsung atas permasalahan nyata: setiap akhir semester, ribuan mahasiswa membuang atau meninggalkan perabotan kos karena tidak ada saluran yang mudah dan aman untuk menjual, mendonasikan, atau mendaur ulangnya.</p>
+        <p>Kami hadir sebagai <strong>Student Move-Out Circular Marketplace</strong> — ekosistem lengkap yang menghubungkan mahasiswa penjual, pembeli, penerima donasi, bank sampah, dan pengrajin upcycle dalam satu platform terintegrasi dengan Hub fisik di Bandung.</p>
+        <p><strong>Visi:</strong> Menjadi platform ekonomi sirkular terpercaya untuk mahasiswa Indonesia yang mentransformasi mobilitas hunian menjadi gaya hidup berkelanjutan pada 2030.</p>
+        <div class="sdg-chips">
+          <span class="sdgc">SDG 1 · No Poverty</span>
+          <span class="sdgc">SDG 10 · Reduced Inequalities</span>
+          <span class="sdgc">SDG 11 · Sustainable Cities</span>
+          <span class="sdgc">SDG 12 · Responsible Consumption</span>
+          <span class="sdgc">SDG 13 · Climate Action</span>
+          <span class="sdgc">SDG 17 · Partnerships</span>
+        </div>
+      </div>
+      <div>
+        <div class="shead"><div class="slabel">Tim Pendiri</div><div class="stitle">People Behind OPERIN</div></div>
+        <div class="team-card">
+          <div class="tavatar">G</div>
+          <div>
+            <div class="tname">Muhammad Guntur Putra Ananta</div>
+            <div class="trole">CEO & Product Strategist</div>
+            <div class="tdesc">Teknik Industri, Telkom University. Memimpin visi strategis, manajemen produk, validasi pasar, dan kepatuhan bisnis.</div>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="tavatar" style="background:var(--orange)">L</div>
+          <div>
+            <div class="tname">Luna Divani Aramita</div>
+            <div class="trole">COO & Logistics Lead</div>
+            <div class="tdesc">Teknik Industri, Telkom University. Merancang rantai pasok mikro, operasional pickup, dan kemitraan mitra daur ulang & upcycle.</div>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-top:14px">
+          <div class="slabel" style="margin-bottom:10px">Maskot OPERIN — OPIE</div>
+          <div style="text-align:center;font-size:2.5rem;margin-bottom:8px">🐱</div>
+          <p style="text-align:center;font-size:.83rem;color:var(--text2)">Kucing Munchkin oranye yang selalu bahagia. Terinspirasi dari foto kucing munchkin oranye berbadan gempal dengan mata bulat besar — karakter yang ramah, hangat, dan penuh semangat berbagi.</p>
+          <div style="display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap">
+            <div style="text-align:center;font-size:.72rem;color:var(--text2)"><div style="font-size:1.8rem">🐱📦</div>Sell Mode</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text2)"><div style="font-size:1.8rem">🐱💙</div>Give Mode</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text2)"><div style="font-size:1.8rem">🐱♻️</div>Recycle</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text2)"><div style="font-size:1.8rem">🐱✨</div>Upcycle</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text2)"><div style="font-size:1.8rem">🐱🛵</div>Pickup</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer><div class="fbot" style="padding:20px 5%"><p>© 2026 OPERIN — Tim Kimpul Jaya, HoloBiz HOLOGY 9.0 UB</p></div></footer>
+</div>
+
+<!-- ====================================================== PAGE: SERVICES -->
+<div id="page-services" class="page">
+  <section>
+    <div class="shead">
+      <div class="slabel">Komponen Ekosistem</div>
+      <div class="stitle">6 Layanan Terintegrasi OPERIN</div>
+      <div class="ssub">Setiap layanan dirancang untuk memastikan tidak ada barang yang sia-sia dan setiap transaksi aman.</div>
+    </div>
+    <div class="services-grid">
+      <div class="sc">
+        <div class="sc-ico" style="background:#e8f5ec">🛒🐱</div>
+        <h3>OPERIN Sell</h3>
+        <p>Jual barang bekas kos dengan escrow aman. AI Smart Valuation merekomendasikan harga wajar. Grade ditetapkan oleh AI (foto) + inspeksi fisik admin di Hub.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--text2)"><strong>Sales Commission:</strong> 6% GMV (gratis 500 transaksi pertama) · <strong>Grade Final:</strong> Admin Hub</div>
+        <span class="stag" style="background:#dcfce7;color:#15803d">Seller & Buyer</span>
+      </div>
+      <div class="sc">
+        <div class="sc-ico" style="background:#dbeafe">💙🐱</div>
+        <h3>OPERIN Give</h3>
+        <p>Donasikan barang layak ke mahasiswa afirmasi atau panti asuhan mitra. Donor dapat Social Impact Certificate digital + Green Points loyalty.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--text2)"><strong>Biaya:</strong> Gratis untuk donor · <strong>Verifikasi:</strong> Penerima diverifikasi admin</div>
+        <span class="stag" style="background:#dbeafe;color:#1d4ed8">Donor & Penerima</span>
+      </div>
+      <div class="sc">
+        <div class="sc-ico" style="background:#fef3c7">♻️🐱</div>
+        <h3>OPERIN Recycle</h3>
+        <p>Barang tidak layak dipilah materialnya — plastik, logam, kayu, elektronik — lalu disalurkan ke mitra bank sampah resmi. Admin input data ke sistem, bukan pemulung.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--text2)"><strong>Kanal:</strong> Transfer ke mitra Bank Sampah & Pengepul Lokal · Bukan long-term storage di Hub</div>
+        <span class="stag" style="background:#fef3c7;color:#b45309">Semua User</span>
+      </div>
+      <div class="sc">
+        <div class="sc-ico" style="background:#fae8ff">✨🐱</div>
+        <h3>OPERIN Upcycle</h3>
+        <p>Barang rusak bermaterial baik ditransfer ke mitra pengrajin & UKM. Setelah selesai, produk di-listing di marketplace OPERIN. Revenue via Sales Commission atau Margin Resale.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--text2)"><strong>Alur:</strong> Hub → Seleksi → Transfer ke Pengrajin → Produk Baru → Marketplace → Terjual → Bayar Mitra</div>
+        <span class="stag" style="background:#fae8ff;color:#7e22ce">Semua User + Pengrajin</span>
+      </div>
+      <div class="sc">
+        <div class="sc-ico" style="background:#fff3e6">🛵🐱</div>
+        <h3>OPERIN Pickup</h3>
+        <p>Penjemputan barang langsung ke lokasi seller via mitra logistik terverifikasi. Atau kurir mandiri user (Gojek/Grab) dengan tracking data kurir.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--text2)"><strong>Pickup & Handling Fee:</strong> Rp25.000/order (≤3 km) · <strong>Gojek/Grab:</strong> tarif kurir + input data untuk tracking</div>
+        <span class="stag" style="background:#fff3e6;color:#c2410c">Seller Barang Besar</span>
+      </div>
+      <div class="sc">
+        <div class="sc-ico" style="background:#f0fdf4">📍🐱</div>
+        <h3>OPERIN Point & Hub</h3>
+        <p>Hub Pilot di Jl. Amagriya Eka 1 No.3, Bandung — tempat inspeksi fisik, temporary storage (bukan gudang permanen), staging, dan dispatch. 10+ OPERIN Point di kos mitra Tel-U.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--text2)"><strong>Model:</strong> Asset-light · Ekspansi warehouse hanya saat utilisasi >80% · <strong>Insentif Host:</strong> Rp5.000/barang</div>
+        <span class="stag" style="background:#f0fdf4;color:#166534">Drop-off Fisik</span>
+      </div>
+    </div>
+
+    <div style="margin-top:52px">
+      <div class="shead"><div class="slabel">Alur Kerja</div><div class="stitle">Cara Kerja OPERIN — Step by Step</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+        <div>
+          <h4 style="font-size:.95rem;font-weight:700;margin-bottom:14px;color:var(--green)">🐱 Alur Seller (Move-Out)</h4>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">1</div>
+              <div><strong style="font-size:.85rem">Daftar & Verifikasi KTM</strong><br><span style="font-size:.75rem;color:var(--text2)">Login Google, OCR scan KTM otomatis</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">2</div>
+              <div><strong style="font-size:.85rem">Upload Foto & Info Barang</strong><br><span style="font-size:.75rem;color:var(--text2)">Min. 3 foto sudut, AI rekomendasikan harga</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">3</div>
+              <div><strong style="font-size:.85rem">Pilih Kanal: Sell/Give/Recycle/Upcycle</strong><br><span style="font-size:.75rem;color:var(--text2)">Routing otomatis ke alur yang sesuai</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">4</div>
+              <div><strong style="font-size:.85rem">Pilih Ongkir: OPERIN/Gojek/Mandiri</strong><br><span style="font-size:.75rem;color:var(--text2)">Hitung jarak otomatis ke Hub, tracking tersedia</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">5</div>
+              <div><strong style="font-size:.85rem">Admin Inspeksi Fisik di Hub → Grade Final</strong><br><span style="font-size:.75rem;color:var(--text2)">Grade AI + verifikasi fisik tenaga manusia (cek rayap, bau, karat)</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 style="font-size:.95rem;font-weight:700;margin-bottom:14px;color:var(--orange)">🐱 Alur Buyer (Move-In)</h4>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">1</div>
+              <div><strong style="font-size:.85rem">Browse Products</strong><br><span style="font-size:.75rem;color:var(--text2)">Filter kategori, jarak, grade A/B/C</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">2</div>
+              <div><strong style="font-size:.85rem">Lihat Detail & Grading Fisik</strong><br><span style="font-size:.75rem;color:var(--text2)">Foto galeri, Grade final admin, seller KTM Verified</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">3</div>
+              <div><strong style="font-size:.85rem">Bayar via Escrow</strong><br><span style="font-size:.75rem;color:var(--text2)">QRIS, GoPay, OVO, ShopeePay — dana aman ditahan</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">4</div>
+              <div><strong style="font-size:.85rem">Ambil di OPERIN Hub / Point</strong><br><span style="font-size:.75rem;color:var(--text2)">Atau atur pengiriman, koordinasi via in-app chat</span></div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:flex;gap:10px;align-items:center">
+              <div style="width:26px;height:26px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.78rem;flex-shrink:0">5</div>
+              <div><strong style="font-size:.85rem">Konfirmasi → Escrow Release</strong><br><span style="font-size:.75rem;color:var(--text2)">Dana dilepas ke seller, review & badge transaksi sukses</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer><div class="fbot" style="padding:20px 5%"><p>© 2026 OPERIN — Tim Kimpul Jaya</p></div></footer>
+</div>
+
+<!-- ====================================================== PAGE: PARTNERS -->
+<div id="page-partners" class="page">
+  <section>
+    <div class="shead">
+      <div class="slabel">Ekosistem Kemitraan</div>
+      <div class="stitle">Partners OPERIN</div>
+      <div class="ssub">OPERIN beroperasi atas dasar kolaborasi multi-pihak yang saling menguntungkan dan berdampak sosial-lingkungan nyata.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px">
+      <!-- CASA DE LUNA — featured partner card -->
+      <div style="background:var(--green-l);border:2px solid var(--green);border-radius:var(--r);padding:22px;grid-column:span 2" class="casa-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <span style="font-size:2rem">🌙</span>
+          <div>
+            <h3 style="font-weight:800;font-size:1rem;color:var(--green);margin:0">Casa de Luna</h3>
+            <div style="font-size:.75rem;color:var(--text2);margin-top:1px">OPERIN Pilot Hub — Official Warehouse & Temporary Storage Partner</div>
+          </div>
+          <span style="margin-left:auto;background:var(--green);color:#fff;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px">PILOT HUB</span>
+        </div>
+        <p style="font-size:.83rem;color:var(--text2);margin-bottom:10px">Casa de Luna adalah bisnis kontrakan & properti mitra OPERIN yang menyediakan ruang temporary storage untuk OPERIN Pilot Hub di Jl. Amagriya Eka 1 No.3, Komplek Amagriya Eka, Perumahan Podomoro Park, Bandung. Model sewa ruang fleksibel sesuai prinsip asset-light — OPERIN tidak memiliki gudang permanen, melainkan menyewa kapasitas di Casa de Luna sesuai volume barang aktif yang dikelola.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:.75rem">
+          <span style="background:#fff;border:1px solid var(--green);color:var(--green);padding:3px 10px;border-radius:20px">📦 Temporary Storage</span>
+          <span style="background:#fff;border:1px solid var(--green);color:var(--green);padding:3px 10px;border-radius:20px">🔍 Lokasi Inspeksi Fisik</span>
+          <span style="background:#fff;border:1px solid var(--green);color:var(--green);padding:3px 10px;border-radius:20px">🚚 Staging & Dispatch</span>
+          <span style="background:#fff;border:1px solid var(--green);color:var(--green);padding:3px 10px;border-radius:20px">📍 Jl. Amagriya Eka 1 No.3</span>
+        </div>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600">🤝 Benefit: Pendapatan sewa ruang fleksibel + exposure brand di platform OPERIN</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px">
+        <div style="font-size:1.8rem;margin-bottom:10px">🏫</div>
+        <h3 style="font-weight:700;font-size:.95rem;margin-bottom:7px">Universitas & Kemahasiswaan</h3>
+        <p style="font-size:.83rem;color:var(--text2)">Telkom University, BEM, Himpunan, unit asrama. Kolaborasi campus activation, PKKMB, program Green Campus, dan validasi pengguna via KTM.</p>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600">🤝 Benefit: Branding sustainability kampus</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px">
+        <div style="font-size:1.8rem;margin-bottom:10px">🏠</div>
+        <h3 style="font-weight:700;font-size:.95rem;margin-bottom:7px">Pemilik & Pengelola Kos</h3>
+        <p style="font-size:.83rem;color:var(--text2)">Pemilik kos & pengelola dormitory sebagai OPERIN Point host. Menyediakan ruang drop-off kecil di area kos mereka.</p>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600">🤝 Benefit: Insentif Rp5.000/barang + promosi gratis</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px">
+        <div style="font-size:1.8rem;margin-bottom:10px">💚</div>
+        <h3 style="font-weight:700;font-size:.95rem;margin-bottom:7px">Lembaga Sosial & Panti Asuhan</h3>
+        <p style="font-size:.83rem;color:var(--text2)">Panti asuhan mitra & komunitas mahasiswa afirmasi sebagai penerima donasi OPERIN Give. Terverifikasi dan didata oleh admin OPERIN.</p>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600">🤝 Benefit: Perabotan gratis + Social Impact Certificate</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px">
+        <div style="font-size:1.8rem;margin-bottom:10px">♻️</div>
+        <h3 style="font-weight:700;font-size:.95rem;margin-bottom:7px">Bank Sampah & Industri Daur Ulang</h3>
+        <p style="font-size:.83rem;color:var(--text2)">Mitra bank sampah lokal Bandung & industri daur ulang bersertifikat untuk menerima material hasil sortir OPERIN Recycle. Admin yang input data ke sistem.</p>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600">🤝 Benefit: Volume material stabil & terkonsolidasi</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px">
+        <div style="font-size:1.8rem;margin-bottom:10px">🎨</div>
+        <h3 style="font-weight:700;font-size:.95rem;margin-bottom:7px">UKM Pengrajin & Upcycler</h3>
+        <p style="font-size:.83rem;color:var(--text2)">Mitra pengrajin & UKM kreatif Bandung yang mengolah barang rusak menjadi produk bernilai baru. Model konsinyasi — dibayar setelah produk terjual, fallback biaya pengerjaan minimal jika tidak laku 30 hari.</p>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600">🤝 Benefit: Bahan baku gratis + platform penjualan</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px">
+        <div style="font-size:1.8rem;margin-bottom:10px">🛵</div>
+        <h3 style="font-weight:700;font-size:.95rem;margin-bottom:7px">Mitra Logistik Lokal</h3>
+        <p style="font-size:.83rem;color:var(--text2)">Driver roda tiga & kurir lokal terverifikasi untuk OPERIN Pickup. Bermitra juga dengan Gojek/Grab untuk opsi pickup mandiri user dengan tracking share trip.</p>
+        <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600">🤝 Benefit: Penghasilan tambahan dari order pickup</div>
+      </div>
+    </div>
+    <div style="margin-top:36px;background:var(--green-l);border:1px solid var(--green);border-radius:var(--r);padding:22px;text-align:center">
+      <div style="font-size:1.4rem;margin-bottom:7px">🤝🐱</div>
+      <h3 style="font-weight:700;margin-bottom:7px;color:var(--green)">Ingin Bermitra dengan OPERIN?</h3>
+      <p style="font-size:.85rem;color:var(--text2);max-width:480px;margin:0 auto 14px">Kami terbuka untuk kemitraan baru — kos, lembaga sosial, pengrajin, kampus, atau perusahaan yang ingin berkolaborasi dalam program sustainability.</p>
+      <button onclick="toggleWA()" style="background:var(--green);color:#fff;padding:10px 22px;border-radius:9px;font-weight:600;cursor:pointer">💬 Hubungi Kami via WhatsApp</button>
+    </div>
+  </section>
+  <footer><div class="fbot" style="padding:20px 5%"><p>© 2026 OPERIN</p></div></footer>
+</div>
+
+<!-- ====================================================== PAGE: PRODUCTS -->
+<div id="page-products" class="page">
+  <section>
+    <div class="shead">
+      <div class="slabel">Marketplace</div>
+      <div class="stitle">Products OPERIN</div>
+      <div class="ssub">Temukan perabotan bekas berkualitas terverifikasi, produk upcycle unik, atau titipkan barangmu di sini.</div>
+    </div>
+    <div class="store-filters">
+      <button class="fbtn active" onclick="filterProducts('all',this)">Semua</button>
+      <button class="fbtn" onclick="filterProducts('sell',this)">🛒 Dijual</button>
+      <button class="fbtn" onclick="filterProducts('give',this)">💙 Donasi</button>
+      <button class="fbtn" onclick="filterProducts('recycle',this)">♻️ Recycle</button>
+      <button class="fbtn" onclick="filterProducts('upcycle',this)">✨ Upcycle</button>
+    </div>
+    <div class="store-grid" id="store-grid">
+      <div class="pcard" data-type="sell">
+        <div class="pcard-img">🛏️<span class="pbadge bs">Dijual</span></div>
+        <div class="pcard-body"><h4>Kasur Single + Cover</h4><div class="price">Rp 450.000</div>
+        <div class="pmeta"><span class="grade gA">Grade A</span><span>📍 200m dari Tel-U</span></div>
+        <button class="btn-pcard">Lihat Detail →</button></div>
+      </div>
+      <div class="pcard" data-type="sell">
+        <div class="pcard-img">🪑<span class="pbadge bs">Dijual</span></div>
+        <div class="pcard-body"><h4>Meja Belajar Kayu</h4><div class="price">Rp 280.000</div>
+        <div class="pmeta"><span class="grade gB">Grade B</span><span>📍 350m dari Tel-U</span></div>
+        <button class="btn-pcard">Lihat Detail →</button></div>
+      </div>
+      <div class="pcard" data-type="sell">
+        <div class="pcard-img">🌀<span class="pbadge bs">Dijual</span></div>
+        <div class="pcard-body"><h4>Kipas Angin Stand Miyako</h4><div class="price">Rp 120.000</div>
+        <div class="pmeta"><span class="grade gA">Grade A</span><span>📍 500m dari Tel-U</span></div>
+        <button class="btn-pcard">Lihat Detail →</button></div>
+      </div>
+      <div class="pcard" data-type="sell">
+        <div class="pcard-img">🗄️<span class="pbadge bs">Dijual</span></div>
+        <div class="pcard-body"><h4>Lemari Plastik 3 Susun</h4><div class="price">Rp 85.000</div>
+        <div class="pmeta"><span class="grade gB">Grade B</span><span>📍 1.1km dari Tel-U</span></div>
+        <button class="btn-pcard">Lihat Detail →</button></div>
+      </div>
+      <div class="pcard" data-type="give">
+        <div class="pcard-img">📚<span class="pbadge bg">Donasi</span></div>
+        <div class="pcard-body"><h4>Set Buku Kuliah Teknik</h4><div class="price" style="color:var(--text2)">Gratis (Donasi)</div>
+        <div class="pmeta"><span class="grade gA">Grade A</span><span>💙 Mahasiswa Afirmasi</span></div>
+        <button class="btn-pcard" style="background:var(--bg2);color:var(--text2)">Ajukan Penerimaan</button></div>
+      </div>
+      <div class="pcard" data-type="give">
+        <div class="pcard-img">🪑<span class="pbadge bg">Donasi</span></div>
+        <div class="pcard-body"><h4>Kursi Lipat Besi</h4><div class="price" style="color:var(--text2)">Gratis (Donasi)</div>
+        <div class="pmeta"><span class="grade gB">Grade B</span><span>💙 Panti Asuhan Mitra</span></div>
+        <button class="btn-pcard" style="background:var(--bg2);color:var(--text2)">Ajukan Penerimaan</button></div>
+      </div>
+      <div class="pcard" data-type="upcycle">
+        <div class="pcard-img">🖼️<span class="pbadge bu">Upcycle</span></div>
+        <div class="pcard-body"><h4>Wall Art Kayu Bekas Kos</h4><div class="price">Rp 175.000</div>
+        <div class="pmeta"><span style="color:var(--text3)">✨ Produk by Mitra Pengrajin</span></div>
+        <button class="btn-pcard" style="background:var(--orange-l);color:var(--orange)">Beli Upcycle →</button></div>
+      </div>
+      <div class="pcard" data-type="upcycle">
+        <div class="pcard-img">🌿<span class="pbadge bu">Upcycle</span></div>
+        <div class="pcard-body"><h4>Pot Tanaman dari Lemari Bekas</h4><div class="price">Rp 95.000</div>
+        <div class="pmeta"><span style="color:var(--text3)">✨ Kayu Repurposed</span></div>
+        <button class="btn-pcard" style="background:var(--orange-l);color:var(--orange)">Beli Upcycle →</button></div>
+      </div>
+      <div class="pcard" data-type="recycle">
+        <div class="pcard-img">🗑️<span class="pbadge br">Recycle</span></div>
+        <div class="pcard-body"><h4>Material Plastik Campuran (3.5 kg)</h4><div class="price" style="color:var(--text2)">Dikirim ke Bank Sampah</div>
+        <div class="pmeta"><span>♻️ Dipilah Admin</span></div>
+        <button class="btn-pcard" style="background:var(--bg2);color:var(--text2)">Lihat Eco-Impact</button></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:28px">
+      <button style="background:var(--green);color:#fff;padding:11px 26px;border-radius:9px;font-weight:600;cursor:pointer" onclick="showPage('submit')">🐱 Titip Barangmu Sekarang →</button>
+    </div>
+  </section>
+  <footer><div class="fbot" style="padding:20px 5%"><p>© 2026 OPERIN</p></div></footer>
+</div>
+
+<!-- ====================================================== PAGE: SUBMIT BARANG -->
+<div id="page-submit" class="page">
+  <section>
+    <div class="form-wrap">
+      <h2>🐱 Submit Barang ke OPERIN</h2>
+      <p class="fsub">Isi form berikut untuk menitipkan barangmu. Admin menghubungimu dalam 1x24 jam untuk konfirmasi penjemputan atau drop-off ke Hub.</p>
+      <div id="success-alert" class="alert-ok">✅ Berhasil! Admin OPERIN menghubungimu via WhatsApp dalam 1x24 jam. Kode tracking: <strong id="tracking-code"></strong></div>
+      <div class="frow">
+        <div class="fg"><label>Nama Lengkap *</label><input type="text" id="f-nama" placeholder="cth. Luna Divani Aramita"></div>
+        <div class="fg"><label>Nomor WhatsApp *</label><input type="text" id="f-wa" placeholder="08xx-xxxx-xxxx"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>NIM / Identitas *</label><input type="text" id="f-nim" placeholder="cth. 1234567890"></div>
+        <div class="fg"><label>Alamat Kos / Lokasi Barang *</label><input type="text" id="f-alamat" placeholder="Jl. ... No. ..."></div>
+      </div>
+      <div class="fg"><label>Nama & Deskripsi Barang *</label><textarea id="f-barang" placeholder="cth. Kasur single kondisi baik busa masih empuk ukuran 90x200cm. Lemari 2 pintu kayu cat mengelupas di pojok bawah."></textarea></div>
+      <div class="fg">
+        <label>Pilih Kanal *</label>
+        <div class="kanal-wrap">
+          <div class="kopt" onclick="selectKanal(this,'sell')"><span class="kico">🛒</span><span class="klbl">Dijual</span></div>
+          <div class="kopt" onclick="selectKanal(this,'give')"><span class="kico">💙</span><span class="klbl">Donasi</span></div>
+          <div class="kopt" onclick="selectKanal(this,'recycle')"><span class="kico">♻️</span><span class="klbl">Recycle</span></div>
+          <div class="kopt" onclick="selectKanal(this,'upcycle')"><span class="kico">✨</span><span class="klbl">Upcycle</span></div>
+        </div>
+      </div>
+      <div class="fg" id="harga-group" style="display:none"><label>Target Harga Jual (Rp)</label><input type="number" id="f-harga" placeholder="cth. 350000"></div>
+      <div class="fg"><label>Kode Referral (Opsional)</label>
+        <div class="ref-row"><input type="text" id="f-ref" placeholder="Masukkan kode referral"><button class="btn-ref" onclick="applyReferral()">Cek Kode</button></div>
+        <div id="ref-result" style="font-size:.76rem;margin-top:4px;font-weight:600"></div>
+      </div>
+      <div class="fg">
+        <label>Pilih Pengiriman ke Hub *</label>
+        <div class="ongkir-box">
+          <h4>🐱 Pilih Metode Pengiriman</h4>
+          <div class="dist-info"><span>📍</span><span class="di" id="dist-text">Menghitung jarak ke Hub Amagriya Eka...</span></div>
+          <div style="margin-top:10px">
+            <div class="oopt sel" onclick="selectOngkir(this,'operin')">
+              <div class="oopt-l"><span class="oopt-ico">🛵</span><div><div class="oopt-name">OPERIN Pickup</div><div class="oopt-sub">Penjemputan ke kamar kosmu, armada roda tiga</div></div></div>
+              <div class="oopt-price">Rp 25.000</div>
+            </div>
+            <div class="oopt" onclick="selectOngkir(this,'gojek')">
+              <div class="oopt-l"><span class="oopt-ico">🟢</span><div><div class="oopt-name">GoSend / GrabExpress</div><div class="oopt-sub">Kurir pilihanmu sendiri — isi data kurir di bawah</div></div></div>
+              <div class="oopt-price" id="gojek-price">Rp 18.000–35.000</div>
+            </div>
+            <div class="oopt" onclick="selectOngkir(this,'mandiri')">
+              <div class="oopt-l"><span class="oopt-ico">🚶</span><div><div class="oopt-name">Antar Sendiri ke OPERIN Point</div><div class="oopt-sub">Drop-off di titik terdekat, gratis</div></div></div>
+              <div class="oopt-price">Gratis</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kurir-fields" id="kurir-fields">
+        <h4>📋 Data Kurir Eksternal (untuk tracking admin)</h4>
+        <div class="frow">
+          <div class="fg"><label>Nama Kurir</label><input type="text" placeholder="cth. Budi (GoSend)"></div>
+          <div class="fg"><label>No. HP Kurir</label><input type="text" placeholder="08xx-xxxx-xxxx"></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>No. Kendaraan</label><input type="text" placeholder="cth. D 1234 AB"></div>
+          <div class="fg"><label>Platform</label><select><option>Gojek GoSend</option><option>Grab Express</option><option>Lainnya</option></select></div>
+        </div>
+        <div class="fg"><label>Link Share Trip (wajib)</label><input type="text" placeholder="Paste link share trip Gojek/Grab di sini"></div>
+      </div>
+      <div class="fg"><label>Catatan Tambahan</label><textarea placeholder="Ada hal khusus yang perlu admin ketahui?"></textarea></div>
+      <button class="btn-form-sub" onclick="submitForm()">🐱 Kirim ke OPERIN Sekarang</button>
+      <p style="font-size:.73rem;color:var(--text3);text-align:center;margin-top:9px">Dengan submit, kamu menyetujui Syarat & Ketentuan OPERIN. Data diverifikasi admin dalam 1x24 jam.</p>
+    </div>
+  </section>
+  <footer><div class="fbot" style="padding:20px 5%"><p>© 2026 OPERIN</p></div></footer>
+</div>
+
+<!-- ====================================================== PAGE: LOCATION -->
+<div id="page-location" class="page">
+  <section class="map-section">
+    <div class="shead">
+      <div class="slabel">Lokasi Hub</div>
+      <div class="stitle">OPERIN Hub & Titik Drop-off</div>
+      <div class="ssub">Kunjungi OPERIN Hub Pilot atau temukan OPERIN Point terdekat di sekitar kampus Tel-U Bandung.</div>
+    </div>
+    <div class="map-wrap">
+      <iframe src="https://maps.google.com/maps?q=Podomoro+Park+Bandung&output=embed&z=15" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="hub-row">
+      <div class="hcard" style="border:1.5px solid var(--green);background:var(--green-l)"><span class="hico">🌙</span><div>
+        <div class="hname" style="color:var(--green)">Casa de Luna × OPERIN Pilot Hub</div>
+        <div style="font-size:.72rem;font-weight:600;color:var(--green);margin-bottom:3px">Temporary Storage · Inspeksi Fisik · Staging · Dispatch</div>
+        <div class="haddr">Jl. Amagriya Eka 1 No.3, Komplek Amagriya Eka, Perumahan Podomoro Park, Bandung</div>
+        <div class="hhours">📅 Senin–Sabtu 09.00–17.00 WIB · Model sewa ruang fleksibel (asset-light) · Ekspansi saat utilisasi >80%</div>
+      </div></div>
+      <div class="hcard"><span class="hico">📍</span><div>
+        <div class="hname">OPERIN Point — Area Kos Tel-U</div>
+        <div class="haddr">10+ titik drop-off di kos-kosan dalam radius 2 km dari kampus Telkom University Bandung</div>
+        <div class="hhours">📅 Sesuai jam operasional kos mitra masing-masing</div>
+      </div></div>
+      <div class="hcard"><span class="hico">🏢</span><div>
+        <div class="hname">OPERIN Point — Dormitory Tel-U</div>
+        <div class="haddr">Asrama Telkom University (Coming Soon — dalam negosiasi dengan pihak kampus)</div>
+        <div class="hhours">🚧 Target aktif: Semester Ganjil 2026/2027</div>
+      </div></div>
+    </div>
+    <div style="background:var(--green-l);border:1px solid var(--green);border-radius:var(--r);padding:18px;margin-top:20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <div style="font-size:1.8rem">🏠🐱</div>
+      <div style="flex:1">
+        <div style="font-weight:700;color:var(--green);margin-bottom:3px">Ingin Kosanmu Jadi OPERIN Point?</div>
+        <div style="font-size:.82rem;color:var(--text2)">Daftarkan kosanmu sebagai titik drop-off. Kamu dapat insentif Rp5.000 per barang yang di-drop + promosi kos gratis di platform OPERIN.</div>
+      </div>
+      <button onclick="toggleWA()" style="background:var(--green);color:#fff;padding:9px 18px;border-radius:8px;font-weight:600;cursor:pointer;flex-shrink:0">Daftar Jadi Host</button>
+    </div>
+  </section>
+  <footer><div class="fbot" style="padding:20px 5%"><p>© 2026 OPERIN</p></div></footer>
+</div>
+
+<!-- ====================================================== PAGE: USER DASHBOARD -->
+<div id="page-dashboard-user" class="page">
+  <div class="udash">
+    <div class="udash-welcome">
+      <h2>Hai, Luna! 👋🐱</h2>
+      <p>Selamat datang di Dashboard OPERIN-mu. Pantau status barang, eco-impact, dan transaksimu di sini.</p>
+    </div>
+    <div class="eco-card">
+      <h3>🌿 Eco-Impact Score Kamu</h3>
+      <div class="eco-stats">
+        <div class="estat"><div class="val">3</div><div class="elbl">Barang Dijual</div></div>
+        <div class="estat"><div class="val">1</div><div class="elbl">Didonasikan</div></div>
+        <div class="estat"><div class="val">4.5 kg</div><div class="elbl">Material Didaur Ulang</div></div>
+        <div class="estat"><div class="val">~12 kg</div><div class="elbl">CO₂ Dikurangi (est.)</div></div>
+        <div class="estat"><div class="val">350 pts</div><div class="elbl">Green Points</div></div>
+      </div>
+    </div>
+    <h3 style="font-weight:700;margin-bottom:12px">📦 Status Barang Aktif</h3>
+    <div class="tracking-card">
+      <div class="tc-header">
+        <div><div class="tc-name">Kasur Single + Cover</div><div class="tc-id">ID: OPR-2026-00142 · Kanal: Sell</div></div>
+        <span class="sbadge si">Sedang Diinspeksi</span>
+      </div>
+      <div class="steps">
+        <div class="step done"><div class="dot">✓</div><div class="slbl">Disubmit</div></div>
+        <div class="step done"><div class="dot">✓</div><div class="slbl">Dijemput</div></div>
+        <div class="step cur"><div class="dot">🔍</div><div class="slbl">Inspeksi Hub</div></div>
+        <div class="step"><div class="dot">·</div><div class="slbl">Grade Ditetapkan</div></div>
+        <div class="step"><div class="dot">·</div><div class="slbl">Listed</div></div>
+        <div class="step"><div class="dot">·</div><div class="slbl">Terjual 🎉</div></div>
+      </div>
+      <div style="margin-top:10px;background:var(--bg2);border-radius:8px;padding:10px;font-size:.78rem;color:var(--text2)">
+        💬 Update Admin: "Barang sudah diterima di Hub Amagriya Eka. Sedang dilakukan inspeksi fisik oleh tim. Grade diupdate dalam 2 jam."
+      </div>
+    </div>
+    <div class="tracking-card">
+      <div class="tc-header">
+        <div><div class="tc-name">Meja Belajar Kayu</div><div class="tc-id">ID: OPR-2026-00098 · Kanal: Sell</div></div>
+        <span class="sbadge sl">Listed di Marketplace</span>
+      </div>
+      <div class="steps">
+        <div class="step done"><div class="dot">✓</div><div class="slbl">Disubmit</div></div>
+        <div class="step done"><div class="dot">✓</div><div class="slbl">Dijemput</div></div>
+        <div class="step done"><div class="dot">✓</div><div class="slbl">Inspeksi Hub</div></div>
+        <div class="step done"><div class="dot">B</div><div class="slbl">Grade B ✓</div></div>
+        <div class="step cur"><div class="dot">🛒</div><div class="slbl">Listed</div></div>
+        <div class="step"><div class="dot">·</div><div class="slbl">Terjual 🎉</div></div>
+      </div>
+      <div style="margin-top:10px;background:var(--green-l);border-radius:8px;padding:10px;font-size:.78rem;color:var(--green);font-weight:600">
+        ✅ Grade B ditetapkan admin. Dipajang di marketplace sejak 20 Agt 2026. Harga: Rp280.000. <span onclick="showPage('products')" style="text-decoration:underline;cursor:pointer">Lihat listing →</span>
+      </div>
+    </div>
+    <h3 style="font-weight:700;margin:22px 0 12px">🕐 Riwayat Transaksi</h3>
+    <div class="tcard">
+      <table>
+        <thead><tr><th>Barang</th><th>Kanal</th><th>Tanggal</th><th>Status</th><th>Pendapatan</th></tr></thead>
+        <tbody>
+          <tr><td>Kipas Angin Miyako</td><td>Sell</td><td>10 Agt 2026</td><td><span class="sbadge ss">Terjual</span></td><td style="color:var(--green);font-weight:600">Rp 113.000</td></tr>
+          <tr><td>Kursi Plastik (2 pcs)</td><td>Give</td><td>5 Agt 2026</td><td><span class="sbadge sd">Didonasikan</span></td><td style="color:var(--text3)">—</td></tr>
+          <tr><td>Barang Plastik Campuran</td><td>Recycle</td><td>3 Agt 2026</td><td><span class="sbadge sr">Didaur Ulang</span></td><td style="color:var(--text3)">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <footer><div class="fbot" style="padding:20px 5%"><p>© 2026 OPERIN</p></div></footer>
+</div>
+
+<!-- ====================================================== PAGE: ADMIN DASHBOARD -->
+<div id="page-dashboard-admin" class="page">
+  <div class="dash-layout">
+    <div class="dash-side">
+      <div class="mlabel">Overview</div>
+      <a class="active"><span class="sico">📊</span> Dashboard</a>
+      <a><span class="sico">📦</span> Barang Masuk</a>
+      <a><span class="sico">🔍</span> Antrian Inspeksi</a>
+      <a><span class="sico">🛒</span> Marketplace</a>
+      <div class="mlabel">Operasional</div>
+      <a><span class="sico">🛵</span> Manajemen Pickup</a>
+      <a><span class="sico">♻️</span> Recycle Batch</a>
+      <a><span class="sico">✨</span> Upcycle Queue</a>
+      <a><span class="sico">💙</span> Manajemen Donasi</a>
+      <div class="mlabel">Hub & Mitra</div>
+      <a><span class="sico">🏠</span> OPERIN Point</a>
+      <a><span class="sico">🚗</span> Driver Mitra</a>
+      <a><span class="sico">🎨</span> Pengrajin Mitra</a>
+      <div class="mlabel">Keuangan</div>
+      <a><span class="sico">💰</span> Revenue Report</a>
+      <a><span class="sico">📋</span> Export ke Sheets</a>
+      <div class="mlabel">Sistem</div>
+      <a><span class="sico">👥</span> User Management</a>
+      <a><span class="sico">⚙️</span> Pengaturan</a>
+    </div>
+    <div class="dash-main">
+      <div class="dheader">
+        <h2>📊 Admin Dashboard OPERIN</h2>
+        <div style="font-size:.8rem;color:var(--text2)">📅 Agustus 2026 · Pilot Phase · Hub: Amagriya Eka (Asset-light)</div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kl">Total User</div><div class="kv">342</div><div class="kd up">↑ +28 minggu ini · SOM target 1.410</div></div>
+        <div class="kpi"><div class="kl">Transaksi Bulan Ini</div><div class="kv">67</div><div class="kd up">↑ +12% vs bulan lalu</div></div>
+        <div class="kpi"><div class="kl">Revenue Bulan Ini</div><div class="kv">Rp4,1jt</div><div class="kd up">Sales Comm + Pickup Fee + Service Fee</div></div>
+        <div class="kpi"><div class="kl">Antrian Inspeksi</div><div class="kv">8</div><div class="kd" style="color:var(--orange)">⚠️ Perlu diproses</div></div>
+        <div class="kpi"><div class="kl">Utilisasi Hub</div><div class="kv">34%</div><div class="kd" style="color:var(--green)">✅ Di bawah trigger 80%</div></div>
+        <div class="kpi"><div class="kl">Upcycle Queue</div><div class="kv">4 item</div><div class="kd" style="color:var(--text3)">→ Di mitra pengrajin</div></div>
+      </div>
+      <div class="two-col">
+        <div class="tcard">
+          <div class="thead-row"><h3>📈 Revenue Streams (BMC-aligned)</h3></div>
+          <div style="padding:14px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px">
+              <div style="background:var(--green-l);border-radius:8px;padding:11px"><div style="font-size:.7rem;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Sales Commission (6%)</div><div style="font-size:1.1rem;font-weight:800;color:var(--green)">Rp 2.545.000</div><div style="font-size:.7rem;color:var(--text2)">71 transaksi Sell × Rp36.000</div></div>
+              <div style="background:var(--orange-l);border-radius:8px;padding:11px"><div style="font-size:.7rem;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Pickup & Handling Fee</div><div style="font-size:1.1rem;font-weight:800;color:var(--orange)">Rp 700.000</div><div style="font-size:.7rem;color:var(--text2)">28 order × Rp25.000</div></div>
+              <div style="background:var(--bg2);border-radius:8px;padding:11px"><div style="font-size:.7rem;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Service Fee</div><div style="font-size:1.1rem;font-weight:800;color:var(--text)">Rp 590.000</div><div style="font-size:.7rem;color:var(--text2)">59 aset diproses Hub × Rp10.000</div></div>
+              <div style="background:var(--bg2);border-radius:8px;padding:11px"><div style="font-size:.7rem;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:3px">Margin Resale</div><div style="font-size:1.1rem;font-weight:800;color:var(--text)">Rp 250.000</div><div style="font-size:.7rem;color:var(--text2)">5 item terpilih × avg Rp50.000</div></div>
+            </div>
+            <div class="chart-ph"><span>📊</span><span>Grafik Revenue & Moving Average MA-3</span><span style="font-size:.7rem">(Power BI / Tableau embedded — Bulan 1–8)</span></div>
+          </div>
+        </div>
+        <div class="tcard">
+          <div class="thead-row"><h3>🌿 Eco-Impact Aggregat</h3></div>
+          <div style="padding:14px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+              <div style="background:var(--green-l);border-radius:8px;padding:11px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--green)">142 kg</div><div style="font-size:.7rem;color:var(--text2)">Material Daur Ulang</div></div>
+              <div style="background:var(--green-l);border-radius:8px;padding:11px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--green)">38</div><div style="font-size:.7rem;color:var(--text2)">Donasi Tersalurkan</div></div>
+              <div style="background:var(--green-l);border-radius:8px;padding:11px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--green)">~426 kg</div><div style="font-size:.7rem;color:var(--text2)">CO₂ Dikurangi (est.)</div></div>
+              <div style="background:var(--orange-l);border-radius:8px;padding:11px;text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--orange)">12</div><div style="font-size:.7rem;color:var(--text2)">Produk Upcycle Terjual</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="thead-row">
+          <h3>🔍 Antrian Inspeksi — Update Grade (AI + Fisik)</h3>
+          <span style="font-size:.75rem;color:var(--orange);font-weight:600">8 barang menunggu</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>ID</th><th>Barang</th><th>Seller</th><th>Kanal</th><th>Tiba di Hub</th><th>Grade AI</th><th>Grade Final (Admin)</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-size:.7rem;color:var(--text3)">OPR-142</td><td><strong>Kasur Single</strong></td><td>Luna D.</td>
+                <td><span class="sbadge bs">Sell</span></td><td>26 Agt 10:30</td>
+                <td><span class="grade gA">A (92%)</span></td>
+                <td><div class="grade-form"><select><option>Pilih</option><option>A</option><option>B</option><option>C</option></select><button class="btn-act">Simpan</button></div></td>
+                <td><button class="btn-act">Update Status</button></td>
+              </tr>
+              <tr>
+                <td style="font-size:.7rem;color:var(--text3)">OPR-143</td><td><strong>Lemari 2 Pintu</strong></td><td>Budi S.</td>
+                <td><span class="sbadge bs">Sell</span></td><td>26 Agt 11:00</td>
+                <td><span class="grade gB">B (71%)</span></td>
+                <td><div class="grade-form"><select><option>Pilih</option><option>A</option><option>B</option><option>C</option></select><button class="btn-act">Simpan</button></div></td>
+                <td><button class="btn-act">Update Status</button></td>
+              </tr>
+              <tr>
+                <td style="font-size:.7rem;color:var(--text3)">OPR-144</td><td><strong>Kursi Kayu ⚠️ cek rayap</strong></td><td>Ani R.</td>
+                <td><span class="sbadge bu">Upcycle</span></td><td>26 Agt 13:15</td>
+                <td><span class="grade gC">C (45%)</span></td>
+                <td><div class="grade-form"><select><option>Pilih</option><option>A</option><option>B</option><option>C</option><option>Reject</option></select><button class="btn-act">Simpan</button></div></td>
+                <td><button class="btn-act">Update Status</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:11px 15px;background:var(--bg2);font-size:.76rem;color:var(--text2);border-top:1px solid var(--border)">
+          ⚠️ <strong>Catatan:</strong> Grade AI = estimasi berbasis foto 2D. Admin WAJIB cek fisik (rayap, bau, karat tersembunyi) sebelum tetapkan Grade Final. Grade Final admin yang tampil ke user di marketplace.
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="thead-row"><h3>🛵 Pickup Aktif — Tracking Kurir</h3></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>ID Order</th><th>Seller</th><th>Alamat Jemput</th><th>Metode</th><th>Driver/Kurir</th><th>Share Trip</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-size:.7rem">PKP-028</td><td>Luna D.</td><td>Jl. Sekeloa 12</td><td>OPERIN Pickup</td><td>Pak Roni · D 1234 AB</td><td style="color:var(--green);font-size:.73rem">goo.gl/maps/xxx</td><td><span class="sbadge si">Dalam Perjalanan</span></td></tr>
+              <tr><td style="font-size:.7rem">PKP-029</td><td>Budi S.</td><td>Jl. Gegerkalong 5</td><td>GoSend Mandiri</td><td>Agus · 0812xxxx · D 5678 AB</td><td style="color:var(--green);font-size:.73rem">goo.gl/maps/yyy</td><td><span class="sbadge sp">Menunggu Dijemput</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="thead-row">
+          <h3>💬 WhatsApp Bot — Data Masuk Terbaru</h3>
+          <button class="btn-act">Export ke Google Sheets 📋</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Waktu</th><th>Nama</th><th>WA</th><th>Barang</th><th>Kanal</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr><td style="font-size:.7rem">26/08 14:30</td><td>Rina K.</td><td>0812-xxxx</td><td>Meja kaca kecil</td><td><span class="sbadge bs">Sell</span></td><td><button class="btn-act">Buat Order</button></td></tr>
+              <tr><td style="font-size:.7rem">26/08 13:45</td><td>Dimas A.</td><td>0857-xxxx</td><td>Lemari plastik + kipas</td><td><span class="sbadge sr">Recycle</span></td><td><button class="btn-act">Buat Order</button></td></tr>
+              <tr><td style="font-size:.7rem">26/08 12:00</td><td>Sari W.</td><td>0821-xxxx</td><td>Set perlengkapan masak</td><td><span class="sbadge sd">Give</span></td><td><button class="btn-act">Buat Order</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:11px 15px;background:var(--bg2);font-size:.76rem;color:var(--text2);border-top:1px solid var(--border)">
+          💡 Data WA Bot masuk otomatis via integrasi Twilio/WATI → Google Sheets → Sync ke dashboard setiap 15 menit. Admin klik "Buat Order" untuk generate ID tracking & notifikasi otomatis ke seller.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================== WA FLOAT BUTTON -->
+<div class="wa-float" onclick="toggleWA()" title="Chat OPERIN di WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</div>
+<div class="wa-tip" id="wa-tip">
+  <div class="wt">🐱 Hi! Saya OPIE dari OPERIN</div>
+  <div class="ws">Mau titip barang atau ada pertanyaan? Chat kami sekarang!</div>
+  <a class="wb" href="https://wa.me/628119210155?text=Halo+OPERIN!+Saya+ingin+menggunakan+layanan.%0ANama+saya%3A+%5BNama%5D%0ABarang+yang+ingin+saya%3A+%5BJual%2FDonasi%2FRecycle%2FUpcycle%5D%0AAlamat+kos%3A+%5BAlamat%5D" target="_blank">💬 Chat via WhatsApp</a>
+</div>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  var pg=document.getElementById('page-'+id);
+  var nav=document.getElementById('nav-'+id);
+  if(pg)pg.classList.add('active');
+  if(nav)nav.classList.add('active');
+  window.scrollTo(0,0);
+}
+function toggleTheme(){
+  var html=document.documentElement;
+  var dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
+}
+function toggleWA(){
+  document.getElementById('wa-tip').classList.toggle('show');
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.wa-float')&&!e.target.closest('.wa-tip'))
+    document.getElementById('wa-tip').classList.remove('show');
+});
+var selectedKanal='';
+function selectKanal(el,val){
+  document.querySelectorAll('.kopt').forEach(k=>k.classList.remove('sel'));
+  el.classList.add('sel');selectedKanal=val;
+  document.getElementById('harga-group').style.display=val==='sell'?'block':'none';
+}
+var selectedOngkir='operin';
+function selectOngkir(el,val){
+  document.querySelectorAll('.oopt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');selectedOngkir=val;
+  var kf=document.getElementById('kurir-fields');
+  kf.className='kurir-fields'+(val==='gojek'?' show':'');
+}
+setTimeout(function(){
+  var d=document.getElementById('dist-text');
+  if(d)d.textContent='📍 Estimasi jarak: 1.8 km ke Hub Amagriya Eka · OPERIN Pickup Rp25.000 · Gojek est. Rp18.000–22.000';
+  var g=document.getElementById('gojek-price');
+  if(g)g.textContent='Rp 18.000–22.000';
+},800);
+var refs={'OPERIN10':'10% diskon ongkir','KIMPUL25':'Komisi 0% untuk 1 transaksi pertama','TELU2026':'Free boost listing 1x'};
+function applyReferral(){
+  var code=document.getElementById('f-ref').value.trim().toUpperCase();
+  var res=document.getElementById('ref-result');
+  if(refs[code]){res.style.color='var(--green)';res.textContent='✅ Kode valid! Benefit: '+refs[code];}
+  else if(code){res.style.color='#dc2626';res.textContent='❌ Kode tidak ditemukan.';}
+}
+function filterProducts(type,btn){
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.pcard').forEach(c=>{
+    c.style.display=(type==='all'||c.dataset.type===type)?'block':'none';
+  });
+}
+function submitForm(){
+  var nama=document.getElementById('f-nama').value.trim();
+  var wa=document.getElementById('f-wa').value.trim();
+  var barang=document.getElementById('f-barang').value.trim();
+  if(!nama||!wa||!barang||!selectedKanal){
+    alert('Mohon lengkapi semua field wajib: Nama, WA, Deskripsi Barang, dan pilih Kanal.');return;
+  }
+  var code='OPR-2026-'+String(Math.floor(Math.random()*90000)+10000);
+  document.getElementById('tracking-code').textContent=code;
+  var al=document.getElementById('success-alert');
+  al.style.display='block';al.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function toggleDrawer(){document.getElementById('nav-drawer').classList.toggle('open')}
+function navGo(id){showPage(id);document.getElementById('nav-drawer').classList.remove('open')}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#navbar')&&!e.target.closest('#nav-drawer'))
+    document.getElementById('nav-drawer').classList.remove('open');
+});
+</script>
+</body>
+</html>
